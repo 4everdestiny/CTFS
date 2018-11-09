@@ -2,5 +2,5 @@
 # 比赛地址
 [2018LCTF](https://lctf.pwnhub.cn/login)  
 # 账号信息
-`1304363840@qq.com`  
+`Lancet`  
 `li123456`
