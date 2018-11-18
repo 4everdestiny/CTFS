@@ -1,0 +1,3 @@
+upx -d 脱壳
+然后逆程序主逻辑得到decode.py
+运行得到flag

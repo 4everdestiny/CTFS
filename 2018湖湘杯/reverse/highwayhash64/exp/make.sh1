@@ -1,0 +1,2 @@
+#!/bin/bash
+gcc pow1.c highwayhash.c highwayhash.h -o pow1

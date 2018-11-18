@@ -1,0 +1,3 @@
+Aircrack -ng 爆破得到秘钥
+wireshark插入秘钥
+http得到flag

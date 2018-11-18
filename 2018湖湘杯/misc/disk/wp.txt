@@ -1,0 +1,4 @@
+xwforensics reload一下
+发现4个ads文件
+拼接起来得到0101字符串
+转化为字符得到flag
