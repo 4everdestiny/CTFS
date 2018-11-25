@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>safe box</title>
+<style>
+body {
+  text-align: center;
+}
+input {
+  font-size: 200%;
+  margin-top: 5em;
+  text-align: center;
+  width: 26em;
+}
+#result {
+  margin-top: 8em;
+  font-size: 300%;
+  font-family: monospace;
+  font-weight: bold;
+}
+body.granted>#result::before {
+  content: "Access Granted";
+  color: green;
+}
+body.denied>#result::before {
+  content: "Access Denied";
+  color: red;
+}
+#content {
+  display: none;
+}
+body.granted #content {
+  display: initial;
+}
+@keyframes spin {
+  from { transform: rotateY(0); }
+  to { transform: rotateY(360deg); }
+}
+.cube {
+  animation: spin 20s infinite linear;
+}
+.cube div {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: rgba(0, 0, 0, 0.51);
+  box-shadow: inset 0 0 60px white;
+  font-size: 20px;
+  text-align: center;
+  line-height: 200px;
+  color: rgba(0,0,0,0.5);
+  font-family: sans-serif;
+  text-transform: uppercase;
+}
+</style>
+<script>
+  function adler32(str) {
+    var a = 1, b = 0, L = str.length, M = 0, c = 0, d = 0;
+ 
+    for (var i = 0; i < L;) {
+        M = Math.min(L - i, 3850);
+        while (M > 0) {
+            c = str.charCodeAt(i++);
+            if (c < 0x80) { a += c; }
+            else if (c < 0x800) {
+                a += 192 | ((c >> 6) & 31); b += a; --M;
+                a += 128 | (c & 63);
+            } else if (c >= 0xD800 && c < 0xE000) {
+                c = (c & 1023) + 64; d = str.charCodeAt(i++) & 1023;
+                a += 240 | ((c >> 8) & 7); b += a; --M;
+                a += 128 | ((c >> 2) & 63); b += a; --M;
+                a += 128 | ((d >> 6) & 15) | ((c & 3) << 4); b += a; --M;
+                a += 128 | (d & 63);
+            } else {
+                a += 224 | ((c >> 12) & 15); b += a; --M;
+                a += 128 | ((c >> 6) & 63); b += a; --M;
+                a += 128 | (c & 63);
+            }
+            b += a; --M;
+        }
+        a = (15 * (a >>> 16) + (a & 65535));
+        b = (15 * (b >>> 16) + (b & 65535));
+    }
+    return ((b % 65521) << 16) | (a % 65521);
+}
+function check(х){
+  if(х!="0x0201"&&adler32(х)==adler32("0x0201")){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+function open_safe() {
+  keyhole.disabled = true;
+  password = /^password{([0-9a-zA-Z_@!?-]+)}$/.exec(keyhole.value);
+  if (!password || !check(password[1])) return document.body.className = 'denied';
+  document.body.className = 'granted';
+  content.value = "\x00\x00\x00\x00\x00\x83\x00\x00\x00N\x00\x01\x00\x01\x00\x00\x00\x00\x06\x05KP\x00\x00\x00\x00\x04\x00\x00\x00\x00\x04\x01\x00\x0bxu[\xd1\x9e\x8d\x03\x00\x05TUtxt.galf\x00\x00\x00\x00\x81\xa4\x00\x00\x00\x01\x00\x00\x00\x00\x00\x18\x00\x08\x00\x00\x00%\x00\x00\x001=\x16\x04\x0cMY\x95\x8f\x00\x00\x00\t\x00\n\x03\x1e\x02\x01KP\x00\x00\x00%\x00\x00\x001=\x16\x04\x0c\x08\x07KP\x045R\tM\xc2\xde\x14sg\x92\xd0K\xbfh\x9c\x08\xeb\xf3@\x9d\x00\x14\x8b^\xfb\xa5\x96O\xc0\xdd\x8a(\xe6\x0c\x92\x1e \xad\x86\xa6@\xbc@J=\x11Z\xfe\x00\x00\x00\x00\x04\x00\x00\x00\x00\x04\x01\x00\x0bxu[\xd1\x9e\xfb[\xd1\x9e\x8d\x03\x00\tTUtxt.galf\x00\x1c\x00\x08\x00\x00\x00%\x00\x00\x001=\x16\x04\x0cMY\x95\x8f\x00\x00\x00\t\x00\n\x04\x03KP";
+}
+</script>
+</head>
+<body>
+<div>
+  <input id="keyhole" autofocus onchange="open_safe()" placeholder="🔑">
+</div>
+<div id="result">
+</div>
+<div>
+  <input id="content">
+</div>
+</body>
+</html>

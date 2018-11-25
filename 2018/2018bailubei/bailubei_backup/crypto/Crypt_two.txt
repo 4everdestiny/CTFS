@@ -1,0 +1,3 @@
+基因会突变，BASE64与Caesar也变异
+加密密文: AUikzgRpLWaVIEaeKrqkJiieLhhqvf6=
+    格式: ISEC{ }

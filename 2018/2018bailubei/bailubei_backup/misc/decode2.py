@@ -1,0 +1,34 @@
+import string
+def sub(a,key):
+    return int(bin(a)[2:][-key:] + bin(a)[2:][:-key],2)
+
+def calcu1(a):
+    return 15 * (a >> 16) + (a & 65535)
+
+def calcu2(a,b):
+    return ((b % 65521) << 16) | (a % 65521)
+
+def adler32(string):
+    a = 1
+    b = 0
+    for i in range(len(string)):
+        a += ord(string[i])
+        b += a
+    a = calcu1(a)
+    b = calcu1(b)
+    return calcu2(a,b)
+
+info = "\x00\x00\x00\x00\x00\x83\x00\x00\x00N\x00\x01\x00\x01\x00\x00\x00\x00\x06\x05KP\x00\x00\x00\x00\x04\x00\x00\x00\x00\x04\x01\x00\x0bxu[\xd1\x9e\x8d\x03\x00\x05TUtxt.galf\x00\x00\x00\x00\x81\xa4\x00\x00\x00\x01\x00\x00\x00\x00\x00\x18\x00\x08\x00\x00\x00%\x00\x00\x001=\x16\x04\x0cMY\x95\x8f\x00\x00\x00\t\x00\n\x03\x1e\x02\x01KP\x00\x00\x00%\x00\x00\x001=\x16\x04\x0c\x08\x07KP\x045R\tM\xc2\xde\x14sg\x92\xd0K\xbfh\x9c\x08\xeb\xf3@\x9d\x00\x14\x8b^\xfb\xa5\x96O\xc0\xdd\x8a(\xe6\x0c\x92\x1e \xad\x86\xa6@\xbc@J=\x11Z\xfe\x00\x00\x00\x00\x04\x00\x00\x00\x00\x04\x01\x00\x0bxu[\xd1\x9e\xfb[\xd1\x9e\x8d\x03\x00\tTUtxt.galf\x00\x1c\x00\x08\x00\x00\x00%\x00\x00\x001=\x16\x04\x0cMY\x95\x8f\x00\x00\x00\t\x00\n\x04\x03KP"
+with open("res2.zip","w") as f:
+    f.write(info[::-1])
+#[0-9a-zA-Z_@!?-]+
+strings2 = string.printable[:string.printable.index("!")]
+strings2 += "_@!?-"
+print strings2
+for s1 in strings2:
+    for s2 in strings2:
+        for s3 in strings2:
+            for s4 in strings2:
+                payload = "0x"+s1+s2+s3+s4
+                if adler32(payload) == adler32("0x0201"):
+                    print "password{payload}".format(payload=payload)
