@@ -4,3 +4,5 @@
 然后导出压缩包，发现需要密码
 最后一位为P，或者爆破压缩包
 解密得到flag
+fcrackzip flag.zip -l 1 -u
+找到密码为q
